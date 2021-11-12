@@ -4,10 +4,10 @@
 /* Project    : State Machine Template
  * File Name  : stateMachine.c
  * Author     : Dhanush.K (dhanushsandy98@gmail.com)
- * Date       : 10/11/2021
+ * Date       : 11/10/2021
  * 
- * Revised on : 11/11/2021
- * Version    : V0.0.3
+ * Revise on  : 12/10/2021
+ * Version    : V0.0.2.2
  * 
  * Brief      : Sample Template for Single State Machine Approach. Event will receive from user or a internal process, 
  *              based on the events State Machine will respond and change to the next state.
@@ -100,8 +100,8 @@ static void ChangeState(STATE_APP newState);
 bool xEventNotify(uint8_t event);
 bool xEventQueueReceive(uint8_t *event);
 
-void *userProcess();
-void *appEventHandler();
+void userProcess(void *argv);
+void appEventHandler(void (*argf)(EVENT_APP event));
 
 /**************************************************************************************************************************/
 /* Main Program
@@ -109,11 +109,12 @@ void *appEventHandler();
 
 int main(void)
 {
+
     /**
      * @brief Program Exit Status Flag.
      * 
      */
-    uint8_t done = false;
+    int done = false;
 
     /* Create threads
      * Thread 1: Takes the Input from User.
@@ -130,9 +131,12 @@ int main(void)
     // Pointer for exit status flag variable.
     void *ptr = &done;
 
+    // Function Pointer for App State Manager.
+    void (*fptr)(EVENT_APP) = &AppStateManager;
+
     // Run the sender and receiver threads
-    pthread_create(&threads[ZERO], &attr, userProcess,     ptr );
-    pthread_create(&threads[ONE ], &attr, appEventHandler, NULL);
+    pthread_create(&threads[ZERO], &attr, (void *)&userProcess, ptr);
+    pthread_create(&threads[ONE ], &attr, (void *)&appEventHandler, fptr);
 
     // Wait until done is TRUE then exit program.
     while (!done);
@@ -267,11 +271,11 @@ bool xEventQueueReceive(uint8_t *event)
  * 
  * @return void* 
  */
-void *appEventHandler()
+void appEventHandler(void (*argf)(EVENT_APP event))
 {
     uint8_t event;
 
-    AppStateManager(EVENT_EMPTY);   // Startup the Application.
+    (*argf)(EVENT_EMPTY);   // Startup the Application.
 
     while (true)
     {
@@ -279,7 +283,7 @@ void *appEventHandler()
         if (xEventQueueReceive((uint8_t *)(&event)) == true)
         {
             printf("Event: %d\r\n", event);
-            AppStateManager((EVENT_APP)event);
+            (*argf)((EVENT_APP)event);
         }
     }
 }
@@ -289,12 +293,12 @@ void *appEventHandler()
  * 
  * @return void* 
  */
-void *userProcess(void *argv)
+void userProcess(void *argv)
 {
     while (true)
     {
         uint8_t event;
-        uint8_t done = *((uint8_t *)argv);
+        int done = *((int *)argv);
 
         // Take the Event from User Process
         scanf("%d", &event);

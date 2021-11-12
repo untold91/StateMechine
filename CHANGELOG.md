@@ -1,7 +1,7 @@
 # _CHANGELOG_
 
-## V0.0.2 (2021-11-10)
-> _Master_
+## V0.0.2.2 (2021-11-11)
+> _Unreleased_
 
 Security:
 
@@ -9,8 +9,10 @@ Security:
 
 Features:
 
-  - Created a changelog file and updated the comments.
-  - Created a ptr to hold the program Exit Status Flag and passed through the thread Process.
+  - created a sate machine and user process.
+  - created a 2 threads to run `appEventHandler` and `userProcess` functions.
+  - used `sleep` function in the program, inclued `<unistd.h>` lib in case of no timmers.
+  - used `QBase` to distribute the events to the state machine.
 
 Fix:
 
@@ -18,27 +20,4 @@ Fix:
 
 Changes:
 
-  - Program Exit Status Flag moved to Main function.
-  - Readme file updated.
-
-## V0.0.2 (2021-11-10)
-> _Master_
-
-Security:
-
-  _None_
-
-Features:
-
-  - Created a sate machine and user process.
-  - Created a 2 threads to run `appEventHandler` and `userProcess` functions.
-  - Used `sleep` function in the program, inclued `<unistd.h>` lib in case of no timmers.
-  - Used `QBase` to distribute the events to the state machine.
-
-Fix:
-
-  _None_
-
-Changes:
-
-  _None_
+  - used pointer functions (`ptrf`) and passed the callback functions through the thread process.
