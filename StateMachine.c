@@ -4,8 +4,10 @@
 /* Project    : State Machine Template
  * File Name  : stateMachine.c
  * Author     : Dhanush.K (dhanushsandy98@gmail.com)
- * Date       : 11/10/2021
- * Version    : V0.0.2
+ * Date       : 10/11/2021
+ * 
+ * Revised on : 11/11/2021
+ * Version    : V0.0.3
  * 
  * Brief      : Sample Template for Single State Machine Approach. Event will receive from user or a internal process, 
  *              based on the events State Machine will respond and change to the next state.
@@ -53,7 +55,7 @@ typedef enum _STATE_APP_
 } STATE_APP;
 
 /**
- * @brief App Event enum COntainer.
+ * @brief App Event enum Container.
  * 
  */
 typedef enum EVENT_APP_
@@ -69,14 +71,12 @@ typedef enum EVENT_APP_
 /* Global Variable Declarations
 /**************************************************************************************************************************/
 
-int done = false;
-
 /**
  * @brief Event Queue Base Array, Holds the input events. Size of the array based on 'MAX_QEVENT' Macro.
  * Default = 16.
  * 
  */
-static uint8_t appEventQueue[MAX_QEVENT] = {NUL};
+static uint8_t appEventQBase[MAX_QEVENT] = {NUL};
 
 /**
  * @brief Current State Holder.
@@ -94,13 +94,13 @@ pthread_mutex_t mutexsum = PTHREAD_MUTEX_INITIALIZER;
 /* Function Declarations
 /**************************************************************************************************************************/
 
-static void AppStateManager(EVENT_APP event);
+void AppStateManager(EVENT_APP event);
 static void ChangeState(STATE_APP newState);
 
 bool xEventNotify(uint8_t event);
 bool xEventQueueReceive(uint8_t *event);
 
-void *userEvents();
+void *userProcess();
 void *appEventHandler();
 
 /**************************************************************************************************************************/
@@ -109,6 +109,12 @@ void *appEventHandler();
 
 int main(void)
 {
+    /**
+     * @brief Program Exit Status Flag.
+     * 
+     */
+    uint8_t done = false;
+
     /* Create threads
      * Thread 1: Takes the Input from User.
      * Thread 2: Process the New Events.
@@ -121,11 +127,14 @@ int main(void)
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-    // Run the sender and receiver threads
-    pthread_create(&threads[ZERO], &attr, userEvents, NULL);
-    pthread_create(&threads[ONE], &attr, appEventHandler, NULL);
+    // Pointer for exit status flag variable.
+    void *ptr = &done;
 
-    // Wait until done is TRUE then exit program
+    // Run the sender and receiver threads
+    pthread_create(&threads[ZERO], &attr, userProcess,     ptr );
+    pthread_create(&threads[ONE ], &attr, appEventHandler, NULL);
+
+    // Wait until done is TRUE then exit program.
     while (!done);
 
     return OK;
@@ -140,7 +149,7 @@ int main(void)
  * 
  * @param event 
  */
-static void AppStateManager(EVENT_APP event)
+void AppStateManager(EVENT_APP event)
 {
     printf("AppStateManager St: %d, Ev: %d\r\n", currentState, event);
 
@@ -209,11 +218,11 @@ bool xEventNotify(uint8_t event)
 {
     for (size_t i = ZERO; i < MAX_QEVENT; i++)
     {
-        if (appEventQueue[i] == NUL)
+        if (appEventQBase[i] == NUL)
         {
-            appEventQueue[i] = event;
+            appEventQBase[i] = event;
             if (i + ONE <= MAX_QEVENT)
-                appEventQueue[i + ONE] = NUL;
+                appEventQBase[i + ONE] = NUL;
             break;
         }
         else
@@ -230,18 +239,18 @@ bool xEventNotify(uint8_t event)
  */
 bool xEventQueueReceive(uint8_t *event)
 {
-    if (appEventQueue[ZERO] != NUL)
+    if (appEventQBase[ZERO] != NUL)
     {
-        *event = appEventQueue[ZERO];
+        *event = appEventQBase[ZERO];
         for (size_t i = ONE; i < MAX_QEVENT; i++)
         {
-            if (appEventQueue[i] != NUL)
+            if (appEventQBase[i] != NUL)
             {
-                appEventQueue[i - ONE] = appEventQueue[i];
+                appEventQBase[i - ONE] = appEventQBase[i];
             }
             else
             {
-                appEventQueue[i - ONE] = NUL;
+                appEventQBase[i - ONE] = NUL;
                 break;
             }
         }
@@ -262,10 +271,11 @@ void *appEventHandler()
 {
     uint8_t event;
 
-    AppStateManager(EVENT_EMPTY);
+    AppStateManager(EVENT_EMPTY);   // Startup the Application.
 
     while (true)
     {
+        // Push the events to the sate manager with it is avalibale in QBase
         if (xEventQueueReceive((uint8_t *)(&event)) == true)
         {
             printf("Event: %d\r\n", event);
@@ -279,11 +289,12 @@ void *appEventHandler()
  * 
  * @return void* 
  */
-void *userEvents()
+void *userProcess(void *argv)
 {
     while (true)
     {
         uint8_t event;
+        uint8_t done = *((uint8_t *)argv);
 
         // Take the Event from User Process
         scanf("%d", &event);
@@ -291,7 +302,6 @@ void *userEvents()
         // Check the Event Exit or not
         if (event == EVENT_EXIT)
         {
-
             perror("Exiting the Application");
             done = true;
             pthread_mutex_destroy(&mutexsum);

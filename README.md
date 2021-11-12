@@ -29,6 +29,8 @@ Sample Template for Single State Machine Approach with 4-Sates and 5-Events. Eve
 ### Proces Flow
 <p align="center"><img src="mdSrc/StateMachine.png" alt="State Mechin" width="1024"></p>
 
+[**CHANGELOG**](CHANGELOG.md)
+
 ### LICENCE
 
 [**MIT**](LICENSE)
