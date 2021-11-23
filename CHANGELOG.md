@@ -1,44 +1,65 @@
 # _CHANGELOG_
 
-## V0.0.2 (2021-11-10)
-> _Master_
+> ## _V0.0.3 (2021-11-22)_
 
-Security:
+Added:
+
+  - [**Makefile**](Makefile) Process created.
+
+Changes:
+
+  - State Machine Logs has been updated.
+  - User Process event varible handling has been updated.
+  - Changelog file updated.
+  - Git [**Ignore**](.gitignore) file has been updated
+
+Removed:
 
   _None_
-
-Features:
-
-  - Created a changelog file and updated the comments.
-  - Created a ptr to hold the program Exit Status Flag and passed through the thread Process.
 
 Fix:
 
   _None_
 
+> ## _V0.0.2 (2021-11-10)_
+
+Added:
+
+  - Created a changelog file and updated the comments.
+  - Created a ptr to hold the program Exit Status Flag and passed through the thread Process.
+
 Changes:
 
   - Program Exit Status Flag moved to Main function.
   - Readme file updated.
+  - Changelog file updated.
 
-## V0.0.2 (2021-11-10)
-> _Master_
-
-Security:
+Removed:
 
   _None_
 
-Features:
+Fix:
+
+  _None_
+
+> ## _V0.0.1 (2021-11-10)_
+
+Added:
 
   - Created a sate machine and user process.
   - Created a 2 threads to run `appEventHandler` and `userProcess` functions.
   - Used `sleep` function in the program, inclued `<unistd.h>` lib in case of no timmers.
   - Used `QBase` to distribute the events to the state machine.
 
+Changes:
+
+  _None_
+
+Removed:
+
+  _None_
+
 Fix:
 
   _None_
 
-Changes:
-
-  _None_
