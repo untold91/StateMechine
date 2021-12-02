@@ -1,5 +1,24 @@
 # _CHANGELOG_
 
+> ## _V0.0.4 (2021-12-02)_
+
+Added:
+
+  - Added Run time & Default Macro Arguments variables in Makefile.
+
+Changes:
+
+  - Modified the main method parameters to accept arguments.
+  - Modified the Masrkdown Src Folder and links in the `readme.md` file.
+
+Removed:
+
+  _None_
+
+Fix:
+
+  _None_
+
 > ## _V0.0.3 (2021-11-22)_
 
 Added:

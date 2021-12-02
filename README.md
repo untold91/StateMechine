@@ -27,7 +27,7 @@ Sample Template for Single State Machine Approach with 4-Sates and 5-Events. Eve
 ```
 
 ### Proces Flow
-<p align="center"><img src="mdSrc/StateMachine.png" alt="State Mechin" width="1024"></p>
+<p align="center"><img src="markdownSrc/StateMachine.png" alt="State Mechin" width="1024"></p>
 
 [**CHANGELOG**](CHANGELOG.md)
 
@@ -37,6 +37,6 @@ Sample Template for Single State Machine Approach with 4-Sates and 5-Events. Eve
 
 #### Contact,
 
-<p align="left"><img src="mdSrc/DK_Logo.jpg" alt="Mark Text" width="40"></p>
+<p align="left"><img src="markdownSrc/DK_Logo.jpg" alt="Mark Text" width="40"></p>
 
 dhanushsandy98@gmail.com | Dhanush.K

@@ -5,6 +5,15 @@ APP = STATE_MACHINE
 TARGETS = \
 StateMachine.c \
 
+# Run time Auguments
+RUN_ARUG = \
+
+# Macro Configuration Arguments
+MARCO_ARUG = \
+-D \
+_DEFAULT_SOURCE
+
+# Additinal Library Arguments
 LIB_ARUG = \
 -pthread
 
@@ -25,10 +34,10 @@ all: clean $(APP)
 
 # Build Application
 $(APP):
-	$(CC_C) $(CFLAGS) $(TARGETS) -o $(BUILD_PATH)$(APP)_APP $(LIB_ARUG)
+	$(CC_C) $(MARCO_ARUG) $(CFLAGS) $(TARGETS) -o $(BUILD_PATH)$(APP)_APP $(LIB_ARUG)
 
 # Run the Application
-run:
+run: all
 	$(BUILD_PATH)$(APP)_APP
 
 # Clean Build

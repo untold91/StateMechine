@@ -109,7 +109,7 @@ void *appEventHandler();
 /* Main Program                                                                                                           */
 /**************************************************************************************************************************/
 
-int main(void)
+int main(int argc, char** argv)
 {
     /**
      * @brief Program Exit Status Flag.
