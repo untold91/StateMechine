@@ -218,19 +218,25 @@ static void ChangeState(STATE_APP newState)
  */
 bool xEventNotify(uint8_t event)
 {
-    for (size_t i = ZERO; i < MAX_QEVENT; i++)
+    bool ret = true;
+    static int qIdx = ZERO;
+    
+    if (qIdx >= MAX_QEVENT)
     {
-        if (appEventQBase[i] == NUL)
-        {
-            appEventQBase[i] = event;
-            if (i + ONE <= MAX_QEVENT)
-                appEventQBase[i + ONE] = NUL;
-            break;
-        }
-        else
-            continue;
+        qIdx = ZERO;
     }
-    return true;
+
+    if (appEventQBase[qIdx] != NUL)
+    {
+        printf("Queue is full, Unable to add new event\r\n");
+        ret = false;
+    }
+    {
+        appEventQBase[qIdx] = event;
+        qIdx++;
+    }
+    
+    return ret;
 }
 
 /**
@@ -242,27 +248,23 @@ bool xEventNotify(uint8_t event)
  */
 bool xEventQueueReceive(uint8_t *event)
 {
-    if (appEventQBase[ZERO] != NUL)
+    bool ret = false;
+    static int qIdx = ZERO;
+
+    if (qIdx >= MAX_QEVENT)
     {
-        *event = appEventQBase[ZERO];
-        for (size_t i = ONE; i < MAX_QEVENT; i++)
-        {
-            if (appEventQBase[i] != NUL)
-            {
-                appEventQBase[i - ONE] = appEventQBase[i];
-            }
-            else
-            {
-                appEventQBase[i - ONE] = NUL;
-                break;
-            }
-        }
-        return true;
+        qIdx = ZERO;
     }
-    else
+
+    if (appEventQBase[qIdx] != NUL)
     {
-        return false;
+        *event = appEventQBase[qIdx];
+        appEventQBase[qIdx] = NUL;
+        qIdx++;
+        ret = true;
     }
+
+    return ret;
 }
 
 /**
